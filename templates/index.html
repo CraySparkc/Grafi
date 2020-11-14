@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% if user.is_authenticated %}
+Hello {{ user.username }}!
+{% else %}
+hey there partner!
+{% endif %}
+
+
+{% load googlecharts %}
+{# container #}
+<div id="out"></div>
+{% googlecharts %}
+	{# named data and options can be reused #}
+	{% data values "out_data" %}
+		{% col "string" "Name" %}"{{ val }}"{% endcol %}
+		{% col "number" "Закупка" %}{{ val }}{% endcol %}
+		{% col "number" "Строительство" %}{{ val }}{% endcol %}
+		{% col "number" "Проектирование" %}{{ val }}{% endcol %}
+	{% enddata %}
+	{# you can also use global javascript variables here, #}
+	{# and call functions #}
+	{% options "out_options" %}
+		kind: "LineChart",
+		options: {
+			width: 1000,
+			height: 480
+		}
+	{% endoptions %}
+	{# chart is assembled from container, data and options #}
+	{% graph "out" "out_data" "out_options" %}
+{% endgooglecharts %}
+</body>
+</html>
