@@ -11,23 +11,24 @@ Hello {{ user.username }}!
 hey there partner!
 {% endif %}
 
-
+<!--
 {% load googlecharts %}
 {# container #}
 <div id="out"></div>
 {% googlecharts %}
 	{# named data and options can be reused #}
 	{% data values "out_data" %}
-		{% col "string" "Name" %}"{{ val }}"{% endcol %}
-		{% col "number" "Закупка" %}{{ val }}{% endcol %}
-		{% col "number" "Строительство" %}{{ val }}{% endcol %}
-		{% col "number" "Проектирование" %}{{ val }}{% endcol %}
+		{% col "string" "Vex" %}{{ val }}{% endcol %}
+		{% col "date" "План" %}{{ val|date:"Y M j" }}{% endcol %}
+		{% col "date" "Оптимист" %}{{ val|date:"Y M j" }}{% endcol %}
+		{% col "date" "Фактическое" %}{{ val|date:"Y M j" }}{% endcol %}
 	{% enddata %}
 	{# you can also use global javascript variables here, #}
 	{# and call functions #}
 	{% options "out_options" %}
 		kind: "LineChart",
 		options: {
+            vAxis: {minValue: 0},
 			width: 1000,
 			height: 480
 		}
@@ -35,5 +36,82 @@ hey there partner!
 	{# chart is assembled from container, data and options #}
 	{% graph "out" "out_data" "out_options" %}
 {% endgooglecharts %}
+-->
+<div id="out"></div>
+<script type="text/javascript" src="//www.google.com/jsapi"></script>
+<script type="text/javascript">
+	(function() {
+		function _clone(obj) {
+			if (obj instanceof Array) {
+				var copy = [];
+				for (var i = 0; i < obj.length; ++i) {
+					copy[i] = _clone(obj[i]);
+				}
+				return copy;
+			}
+			else if (obj instanceof Object) {
+				var copy = {};
+				for (var i in obj) {
+					if (obj.hasOwnProperty(i)) {
+						copy[i] = _clone(obj[i]);
+					}
+				}
+				return copy;
+			}
+			return obj;
+		}
+		googlecharts = [];
+		var opt;
+
+
+
+        var googlecharts_data_out_data = [
+            ["01",new Date(2020,10,23),new Date(2020,10,20),new Date(2020,10,21)],
+            ["02",new Date(2020,10,28),new Date(2020,10,26),new Date(2020,10,30)],
+            ["03",new Date(2020,11,22),new Date(2020,11,18),new Date(2020,11,17)],
+            null // fix trailing comma
+        ];
+        googlecharts_data_out_data.pop();
+        googlecharts_data_out_data._cl = [["string","Name"],["date","План"],["date","Оптимист"],["date","Фактическое"]];
+
+
+
+
+        var googlecharts_options_out_options = {
+
+		kind: "LineChart",
+		options: {
+			width: 1000,
+			height: 480
+		}
+
+        };
+
+
+
+        opt = _clone(googlecharts_options_out_options);
+        opt.container = "out";
+        opt.rows = googlecharts_data_out_data;
+        googlecharts.push(opt);
+
+
+	})();
+	function googlecharts_main() {
+		if (typeof googlecharts == "undefined") return;
+		for (var i = 0; i < googlecharts.length; ++i) {
+			var c = googlecharts[i];
+			var data = new google.visualization.DataTable();
+			for (var j = 0; j < c.rows._cl.length; ++j) {
+				data.addColumn.apply(data, c.rows._cl[j]);
+			}
+			data.addRows(c.rows);
+			c.container = document.getElementById(c.container);
+			var chart = new google.visualization[c.kind](c.container);
+			chart.draw(data, c.options);
+		}
+	}
+	google.load("visualization", "1.1", {packages: ["corechart"]});
+	google.setOnLoadCallback(googlecharts_main);
+</script>
 </body>
 </html>

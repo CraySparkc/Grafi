@@ -1,3 +1,6 @@
+from datetime import datetime, timedelta, date
+
+import qsstats
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
@@ -7,7 +10,14 @@ from appname.form import UserProfileForm, UserForm
 
 
 def index(request):
-    return render(request, 'index.html', {'values': [['Понедельник', 40, 10, 39], ['Вторник', 10, 29, 5], ['Среда', 96, 39, 20], ['Четверг', 10, 46, 13]]})
+    dates = []
+    for i in range(0,9):
+        dates.append(datetime.now() + timedelta(i))
+    context = {'values': [['01', dates[1], dates[0], dates[2]],
+                          ['02', dates[3], dates[5], dates[4]],
+                          ['03', dates[6], dates[8], dates[7]]]}
+
+    return render(request, 'index.html', context)
 
 
 '''def register(request):

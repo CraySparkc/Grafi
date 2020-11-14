@@ -75,7 +75,10 @@ class Task(models.Model):
         return self.name
 
 class MasterTask(models.Model):
-    task = models.ForeignKey(Task, verbose_name='Подчиненный процесс', on_delete=models.SET_NULL, blank=True, null=True)
+    task = models.ForeignKey(Task, verbose_name='Веха', on_delete=models.SET_NULL, blank=True, null=True)
+
+    def __str__(self):
+        return self.task.name
 
 
 class Resource(models.Model):
